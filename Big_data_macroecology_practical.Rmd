@@ -9,6 +9,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+#his questions are likely to be on the phylogeny of the tree situation
 ```
 
 Necessary packages that you'll need to install using the "install.packages(" ... ")" command:
@@ -52,6 +53,7 @@ library(tidyverse)
 
 #Fetch the most recent database version from www.compadre-db.org with:
 comadre <- cdb_fetch("comadre") #or use 'compadre' for the plant database
+##this is 46.3MB damnn
 
 #or load from a local .Rdata file by first downloading it here: 
 #https://compadre-db.org/Data/Comadre#, and using the command
@@ -112,6 +114,7 @@ Now that you have subset the data to narrow-down your research to mammals, you m
 #Explore some MPMs in your subset database
 #The first MPM stored in your data is:
 matA(comadre_sub)[[1]]
+#so the columns are what they are this year, and the columns are what they are next year
 
 #And the submatrices *U*, *F*, and *C* are:
 matU(comadre_sub)[[1]]
@@ -122,6 +125,19 @@ matC(comadre_sub)[[1]]
 comadre_sub@data[1,]
 
 #You can explore other hits by changing "1" for another index number
+
+#anstructural model - treating all individuals the same way - to calculate growth rate get size of pop now and size of it next year. no. individuals in future/no. individuals now gets the growth rate. if above 1 pop is growing, if 1 there's been no change in growth
+#Making assumptions - closed system, also assuming all individuals are the same
+#predictors of survival:
+##age - convenient trait, can determine if can reproduce. Some species can estimate age, some can't - e.g. deer based on antler 
+##sex
+##size
+#e.g. insect with well defined lifecycle - instar1, instar2, adult.
+##instar 1 can't remain as instar 1 - instar2 or dead, get a 3 stage population model, get rates of survival and of development, reproduction
+#F - fecundity - matrix to do with sexual reproduction
+#c - clonality - happens a lot across the tree of life, if in a subset C is 0 it means working w a non clonally reproducing organism 
+#U - all other survival that isn't based on sexual reproduction or cloning
+#A is F, C and U mashed together
 ```
 
 Now we are going to obtain some key properties from these MPM. Namely, we will estimate population growth rate and generation time. As you may remember from lecture, the population growth rate ($\lambda$) corresponds to the dominant eigenvalue of the MPM *A*, and it projects the rate of growth (if $\lambda$ > 1) or decline ($\lambda$ < 1) of the population. One of the three definitions of generation time (T) is the mean age of reproductive individuals in the population. This life history trait is tightly linked to the rate of population turnover, and it is frequently used in assessments of vulnerability of the IUCN (e.g. https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2664.13368).
@@ -170,6 +186,7 @@ if (length(which(is.infinite(comadre_sub$gen_T)))>0) {
   comadre_sub <- comadre_sub[-which(is.infinite(comadre_sub$gen_T)),]
 }
 
+#i think this is a little bit dodgy because it is overwriting where r ur pipes bbgorl
 ```
 
 Note that the object 'comadre_sub' contains quite a few MPMs for each species. Sometimes these MPMs correspond to different years (e.g., 2000 to 2001, 2001, to 2002...) within the same population, and sometimes they may refer to different populations, or even come from different publications/research groups. As such, for the purposes of today's exercise, and in the interest of time, we will only sample one MPM per species:
